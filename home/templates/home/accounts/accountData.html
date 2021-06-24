@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'js/basic.js' %}"></script>
+    <script>
+        function logOut() {
+            if (confirm("Do you want to log out?")) {
+                $.get(
+                    "{% url 'home:logOutCheck' %}",
+                    function(data, state) {
+                        if (state == "success") {
+                            window.location.replace("{% url 'home:home' %}");
+                        }
+                    }
+                )
+            }   
+        }
+
+        function del() {
+            if (confirm("Do you want to delete your account?")) {
+                if (confirm("Are you sure?, This change cannot be undone!")) {
+                    if (confirm("Click on accept to delete your account")) {
+                        window.location.href = "{% url 'home:deleteUser' %}";
+                    }
+                }
+            }
+        }
+
+        function changeDescription() {
+            $.post(
+                "{% url 'home:changeUserDescription' %}",
+                {
+                    "description": document.getElementById("description").value
+                },
+                function(data, status) {
+                    if (status == "success") {
+                        document.getElementById("descriptionSuccess").innerHTML = data;
+                        setTimeout(
+                            function() {
+                                document.getElementById("descriptionSuccess").innerHTML = "";
+                            }, 
+                            3000
+                        );
+                    }
+                }
+            )
+        }
+      
+        function chat() {
+            const chatId = prompt("Chat Id:");
+            window.location.href = "/home/userChat/"+chatId;
+        }
+
+        $(
+            function() {
+                sendByEnter(
+                    document.getElementById("description"), 
+                    changeDescription,
+                    event="keypress",
+                    condition=function(event) {
+                        console.log(event.ctrlKey && (event.keyCode == 10 || event.keyCode == 13));
+                        return event.ctrlKey && (event.keyCode == 10 || event.keyCode == 13);
+                    }
+                );
+            }
+        );
+    </script>
+</head>
+<body>
+    <h1>Your data is:</h1>
+    <p>Profile Picture</p>
+    <br>
+    <img src="{{ profilePic }}" alt="profilePic" style="width: 300px; height: 300px;">
+    <br>
+    <a href="{% url 'home:profilePic' %}">Change profile picture</a>
+    <p>Username: {{ username }}</p>
+    <p>Password: {{ password }}</p>
+    <p>Creation Date: {{ creationDate }}</p>
+    
+    <p>Description:</p>    
+    <textarea name="" id="description" placeholder="Your descrption goes here" cols="40" rows="6" maxlength="254" style="font-family: 'Times New Roman', Times, serif;">{{ description }}</textarea>
+    <br>
+    <button type="button" onclick="changeDescription()">change description</button>
+    <br>
+    <p id="descriptionSuccess" style="color: red;"></p>
+
+    <a href="{% url 'home:allMyFriends' %}">See your friends</a>
+    <br>
+    <a href="{% url 'home:checkFriendRequest' %}">See your friend requests</a>
+    <br>
+    <a href="{% url 'home:sendFriendRequest' %}">search other users !!</a>
+    <br>
+    <button type="button" onclick="chat()">Go to a global chat !</button>
+    <br>
+
+    <p>Do you want to post something?</p>
+    <a href="{% url 'home:postContent' %}">Go here !</a>
+    <br>
+    <a href="{% url 'home:allPosts' %}">See all posts !</a>
+    
+    <p>Do you want to change your password?</p>
+    <a href="{% url 'home:changePassWord' %}">Go here !</a>
+    <br>
+
+    <button type="button" onclick="logOut()">Log out?</button>
+    <br>
+    <button type="button" onclick="del()">Delete account?</button>
+    <br>
+    <a href="{% url 'home:home' %}">Go to the home page</a>
+</body>
+</html>

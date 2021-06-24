@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Picture</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Profile Picture</h1>
+    <form id="a">
+        <label for="image">Put a profile pic</label>
+        <br>
+        <input type="file" name="image" id="image" accept="image/png, image/jpeg, image/gif">
+        <br>
+        <img src="" alt="file" id="display" style="width:300px;height:300px;">
+    </form>
+    <button type="button" onclick="submit()">submit</button>
+    <p id="success"></p>
+    <script>
+        document.addEventListener(
+            'DOMContentLoaded',
+            function() {
+                document.querySelector("#image").onchange=changeImage;
+            },
+            false
+        );
+
+        function changeImage() {
+            var input = document.getElementById("image");
+            var fReader = new FileReader();
+            fReader.readAsDataURL(input.files[0]);
+            fReader.onloadend = function(event){
+                var img = document.getElementById("display");
+                img.src = event.target.result;
+            }
+        };
+
+        function submit() {
+            var fd = new FormData();
+            var files = $('#image')[0].files;
+            fd.append('profilePic',files[0]);
+            $.ajax({
+                url: "{% url 'home:addProfilePic' %}",
+                type: 'post',
+                data: fd,
+                contentType: false,
+                processData: false,
+                success: function(response){
+                    $("#success").text(response)
+                },
+            });
+        }
+        try {
+            changeImage();
+        } catch (error) {
+            
+        }
+    </script>
+</body>
+</html>

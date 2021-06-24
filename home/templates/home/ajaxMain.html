@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajax Home Page</title>
+</head>
+<body>
+    <h1>All my ajax codes</h1>
+
+    {% for n in myList %}
+        <p>
+            {% if n != "home" %}
+                <a href="/home/ajax/{{ n }}">Go to {{ n }} page</a>
+            {% else %}
+                <a href="{% url 'home:home' %}">Go to {{ n }} page</a>
+            {% endif %}
+        </p>
+    {% endfor %}
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Post</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(
+            function() {
+
+                var allPosts;
+                var postContent = document.getElementById("postContent");
+                $.get(
+                    "{% url 'home:getAllUserPosts' %}",
+                    function(data, status) {
+                        if (status == "success") {
+                            allPosts = eval(data);
+                            for (var index in allPosts) {
+                                generatePostElement(postContent, allPosts[index]["content"]);
+                                getLastPost();
+                            }
+                        }
+                    }
+                )
+
+                function getLastPost() {
+                    $.get(
+                        "{% url 'home:getAllLastPost' %}",
+                        function(data, status) {
+                            var newPost = document.getElementById("newPosts")
+                            if (status == "success") {
+                                post = eval(data);
+                                generatePostElement(newPost, post["content"]);
+                                getLastPost();
+                            }
+                        }
+                    )
+                }
+                
+                function generatePostElement(parent, content) {
+                    var tag = document.createElement("p");
+                    tag.appendChild(document.createTextNode(content));
+                    parent.insertAdjacentElement("beforebegin", tag);
+                    parent.insertAdjacentElement("beforebegin", document.createElement("hr"));
+                }     
+
+            }
+        )
+    </script>
+</head>
+<body>
+    <h1>All Post</h1>
+    <div id="newPosts">
+
+    </div>
+    <div id="postContent">
+
+    </div>
+   
+</body>
+
+</html>

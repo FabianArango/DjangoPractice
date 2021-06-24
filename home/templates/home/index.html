@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <h1>Hello !!!</h1>
+    <p>
+        <a href="{% url 'home:ajaxMain' %}">Go to ajax</a>
+    </p>
+    <p> 
+        <a href="{% url 'home:download' %}">Go to downloads page</a>
+    </p>
+    <p>
+        <a href="{% url 'home:space' %}">Go to games page</a>
+    </p>
+    <p>
+        <a href="{% url 'home:accountData' %}">Check your data</a>
+    </p>
+    <p>
+        <a href="{% url 'home:logIn' %}">log in!</a>
+    </p>
+    <p>
+        You dont have an account?
+        <br>
+        <a href="{% url 'home:signUp' %}">sign up!</a>
+    </p>
+    <p>
+        <a href="{% url 'home:csrfAttack' %}">csrf Attack</a>
+    </p>
+    <p>
+        <a href="{% url 'home:chatAll' %}">chat</a>
+    </p>
+</body>
+</html>

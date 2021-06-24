@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'js/basic.js' %}"></script>
+    <script>
+        var content = [];
+
+        $(
+            function() {
+                sendByEnter(
+                    document.getElementById("username"), 
+                    searchUser
+                );
+            }
+        )
+
+        function searchUser() {
+            $.post(
+                "{% url 'home:getUserList' %}",
+                {
+                    "username": document.getElementById("username").value
+                },
+                function(data, status) {
+                    if (status == "success") {
+                        cleanContent();
+                        console.log(data);
+                        if (data["userList"].length != 0) {
+                            data["userList"].forEach(element => {
+                                buildUser(element);
+                            });
+                        } else {
+                            noResults();
+                        }
+                    }
+                }
+            )
+        }
+
+        function noResults() {
+            var div = document.getElementById("userList");
+            var p = document.createElement("p");
+            p.appendChild(document.createTextNode("Thre's no results"));
+            content.push(p);
+            div.appendChild(p);
+        }
+
+        function buildUser(data) {
+            var username = data[0];
+            var profilePic = data[1];
+            var div = document.getElementById("userList");
+
+            var placeholder = document.createElement("div");
+            div.appendChild(placeholder);
+
+            var button = '<button onclick="sendFriendRequest(\'UUU\')">Send Friend Request</button>';
+            button = button.replace(/UUU/g, username);
+
+            var inner = '<h2 style="color: #000000;"><img style="float: left;" src="/SSS" alt="profilePic" width="93" height="93" /><hr> UUU</h2>BBB<p id="UUU" style="color: red;"><p>';
+            inner = inner.replace(/UUU/g, username);
+            inner = inner.replace(/SSS/g, profilePic);
+            inner = inner.replace(/BBB/g, button);
+
+            placeholder.innerHTML = inner;
+            content.push(placeholder);
+        }
+
+        function cleanContent() {
+            content.forEach(element => {
+                element.remove();
+            });
+        }
+
+        function sendFriendRequest(username) {
+            $.post(
+                "{% url 'home:friendRequest' %}",
+                {
+                    "username": username
+                },
+                function(data, status) {
+                    if (status == "success") {
+                        var success = document.getElementById(username);
+                        success.innerText = data;
+                        setTimeout(
+                            function() {
+                                success.innerText = "";
+                                console.log(true);
+                            },
+                            3000
+                        );
+                        console.log(true);
+                    }
+                }
+            )
+        }
+    </script>
+</head>
+<body>
+    <input type="text" name="" id="username" placeholder="Search user">
+    <br>
+    <button type="button" onclick="searchUser()">search</button>
+    <div id="userList"></div>
+</body>
+</html>

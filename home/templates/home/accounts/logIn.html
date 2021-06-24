@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+    <script src="{% static 'js/basic.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function logIn() {
+            $.post(
+                "{% url 'home:logInCheck' %}",
+                {
+                    "username": document.getElementById("username").value,
+                    "password": document.getElementById("password").value
+                },
+                function(data, status) {
+                    if (status == "success") {
+                        if (data != "True") {
+                            document.getElementById("errorMessage").innerHTML = data;
+                        } else {
+                            window.location.replace("{% url 'home:accountData' %}");
+                        }
+                    }
+                }
+            )
+        }
+        $(
+            function() {
+                sendByEnter(document.getElementById("password"), logIn);
+            }
+        );
+    </script>
+</head>
+<body>
+    <h1>Log In</h1>
+    <form action="">
+        <label for="username">Username:</label>
+        <input type="text" for="username" id="username">
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" for="password" id="password">
+    </form>
+    <input type="checkbox" onclick="showPassword()">Show Password 
+    <br>
+    <button type="button" onclick="logIn()">log in</button>
+    <p id="errorMessage" style="color: red;"></p>
+    <p>Do you don't have a account?</p>
+    <a href="{% url 'home:signUp' %}">sign up !</a>
+    
+</body>
+</html>

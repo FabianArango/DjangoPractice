@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ username }}</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script>
+		$(
+			function() {
+				var br = document.getElementById("description");
+				br.innerHTML = br.innerHTML.replace(/\n/g, "<br>");
+			}
+		);
+	</script>
+</head>
+<body>
+    <img src="{{ profilePic }}" alt="profilePic" style="width: 300px; height: 300px;">
+    <h2>{{ username }}</h2>
+    <p>Joined at: {{ creationDate }}</p>
+    
+    <p>Description:</p>
+    <p id="description">{{ description }}</p>
+    <a href="{% url 'home:allMyFriends' %}">Go back to friend page</a> 
+</body>
+</html>

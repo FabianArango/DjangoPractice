@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Posts</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>All the posts</h1>
+    <div id="posts">
+    </div>
+    <script>
+        var indexGen = -1;
+        $.get(
+            "{% url 'home:getAllUserPosts' %}",
+            function(data, status) {
+                if (status == "success") {
+                    for (var index in data) {
+                        console.log(data[index]);
+                        buildPost(data[index]);
+                    }
+                    checkLastPost();
+                }
+            }
+        )
+
+        function checkLastPost() {
+            $.post(
+                "{% url 'home:getLastPost' %}",
+                {
+                    "index": indexGen.toString()
+                },
+                function(data, status) {
+                    if (status == "success") {
+                        if (data["new"] == "true") {
+                            buildPost(data["data"]);
+                        }
+                        console.log(data);
+                        setTimeout(
+                            function() {
+                                checkLastPost();
+                            },
+                            3000
+                        );
+                        console.log(indexGen)
+                    }
+                }
+            )
+
+        }
+
+        function buildPost(data) {
+            var postsBody = document.getElementById("posts");
+
+            var username = document.createElement("p");
+            var content = document.createElement("p");
+            var creationDate = document.createElement("p");
+
+            var sU = document.createElement("strong");
+            sU.appendChild(document.createTextNode("username: "))
+
+            var sC = document.createElement("strong");
+            sC.appendChild(document.createTextNode("content: "))
+
+            var sCD = document.createElement("strong");
+            sCD.appendChild(document.createTextNode("creationDate: "))
+
+            username.appendChild(sU);
+            content.appendChild(sC);
+            creationDate.appendChild(sCD);
+
+            username.appendChild(document.createTextNode(data["username"]));
+            content.appendChild(document.createTextNode(data["content"]));
+            creationDate.appendChild(document.createTextNode(data["creationDate"]));
+
+            postsBody.appendChild(username);
+            postsBody.appendChild(content);
+            postsBody.appendChild(creationDate);
+            postsBody.appendChild(document.createElement("hr"))
+
+            if (document.body.scrollHeight-window.scrollY <= 744+70) {
+                window.scrollTo(0, document.body.scrollHeight);
+            }
+
+            console.log(document.body.scrollHeight-window.scrollY);
+            indexGen ++;
+        }
+
+    </script>
+</body>
+</html>

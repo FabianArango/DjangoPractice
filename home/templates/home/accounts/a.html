@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PopUp</title>
+    <script>
+        function displayBox() {
+            var box = document.getElementById("box")
+            box.style.display = "block";
+        }
+    </script>
+
+    <style>
+        .box {
+            display: none; /* Hidden by default */
+            
+
+            background-color: #fefefe;
+            border: 1px solid red ;
+
+            margin: auto;
+            width: 60%;
+
+            padding: 30px;
+
+            /*margin: auto;*/
+            /*padding: 20px;*/
+            /*border: 1px solid #888;*/
+        }
+
+    </style>
+</head>
+<body>
+
+   <button type="button" onclick="displayBox()">See</button>
+
+   <div class="box" id="box">
+        <p>some text</p>
+   </div>
+    
+</body>
+</html>

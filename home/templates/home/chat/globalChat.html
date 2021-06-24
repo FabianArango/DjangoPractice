@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    {{ chatId|json_script:"chatId" }}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'js/basic.js' %}"></script>
+    <script>
+        
+        const chatId = JSON.parse(document.getElementById('chatId').textContent);
+        const webSocket = new WebSocket(
+            "ws://"+window.location.host+"/ws/userChat/"+chatId+"/"
+        );
+
+        webSocket.onopen = function(event) {
+            $.get(
+                "/home/initChat/"+chatId,
+                function(data, status) {
+                    if (status == "success") {
+                        console.log(data);
+                        buildAll(data);
+                    }
+                }
+            )
+        }
+
+        webSocket.onmessage = function(event) {
+            var data = JSON.parse(event.data);
+            buildAll(data);
+        }
+
+        function buildAll(data) {
+            data.data.forEach(element => {
+                buildMessage(element.username, element.profilePic, element.message, element.username == getCookie("username"));
+            });
+        }
+
+        function sendMessage() {
+            var message = document.getElementById("input");
+            //console.log(message);
+            webSocket.send(
+                JSON.stringify(
+                    {
+                        "message": message.value
+                    }
+                )
+            );
+            message.value = "";
+        }
+        
+        function buildMessage(username, profilePic, message, itsMe) {
+            var div = document.getElementById("messages");
+            var placeholder = document.createElement("div");
+            div.appendChild(placeholder);
+            var inner = '<h2><img style="float: FFF;" src="SSS" alt="profilePic" width="93" height="93" /><hr> UUU</h2><p>CCC</p>';
+            inner = inner.replace(/UUU/g, username == getCookie("username")? "You": username);
+            inner = inner.replace(/SSS/g, profilePic);
+            inner = inner.replace(/CCC/g, message.replace(/\n/g, "<br>"));
+            inner = inner.replace(/FFF/g, itsMe? "right": "left");
+            placeholder.innerHTML = inner;
+
+            if (document.getElementById("messages").scrollHeight-document.getElementById("messages").scrollTop <= 550+200) {
+                document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
+            }
+        }
+
+        $(
+            function() {
+                var actualTitle = document.getElementById("title");
+                if (actualTitle.innerText.includes("FriendToFriend")) {
+                    actualTitle.innerText = actualTitle.innerText.replace("FriendToFriend", "");
+                    actualTitle.innerText = actualTitle.innerText.replace(getCookie("username"), "");
+                }
+
+                sendByEnter(
+                    document.getElementById("input"), 
+                    sendMessage,
+                    event="keypress",
+                    condition=function(event) {
+                        console.log(event.ctrlKey && (event.keyCode == 10 || event.keyCode == 13));
+                        return event.ctrlKey && (event.keyCode == 10 || event.keyCode == 13);
+                    }
+                );
+            }
+        );
+    </script>
+</head>
+<body>
+    <h1 id="title">{{ chatId }}</h1>
+    <div id="messages" style="overflow: scroll; overflow-x: hidden; height: 450px;"></div>
+    <textarea name="" id="input" cols="84" rows="3" placeholder="Send something" style="font-family: 'Times New Roman', Times, serif;" maxlength="254"></textarea>
+    <br>
+    <button type="button" onclick="sendMessage()">Send Message</button>
+</body>
+</html>

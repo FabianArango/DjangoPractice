@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+    <title>Ajax jQuerry</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
+        });
+
+        function showHintPost(str) {
+            if (str.length == 0) {
+                document.getElementById("txtHint").innerHTML = "";
+            } else {
+                $.post(
+                    "{% url 'home:responsePost' %}",
+                    {
+                        "letter": str,
+                    },
+                    function(data, status){
+                        document.getElementById("txtHint").innerHTML = data; 
+                    }
+                );
+            }
+        }
+    </script>
+</head>
+<body>
+    <p>
+        <b>Start typing a name in the input field below:</b>
+    </p>
+    <form action="">
+        <label for="fname">First name:</label>
+        <input type="text" id="fname" name="fname" onkeyup="showHintPost(this.value)" maxlength="1">
+    </form>
+    <p>Suggestions: <span id="txtHint"></span></p>
+    <a href="{% url 'home:ajaxMain' %}">Go to Ajax Home Page</a>
+</body>
+</html>

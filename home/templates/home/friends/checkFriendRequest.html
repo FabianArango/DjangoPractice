@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friend Requests</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'js/basic.js' %}"></script>
+    <script>
+        var content = [];
+        function getFriendRequest() {
+            $.get(
+                "{% url 'home:getFriendRequest' %}",
+                function(data, status) {
+                    if (status == "success") {
+                        console.log(data);
+                        data["data"].forEach(element => {
+                            buildUser(element);
+                        });
+                    }
+                }
+            )
+        }
+
+        function buildUser(data) {
+            var username = data[0];
+            var profilePic = data[1];
+            var div = document.getElementById("userList");
+
+            var placeholder = document.createElement("div");
+            div.appendChild(placeholder);
+
+            var button = '<button onclick="acceptFriendRequest(\'UUU\', \'true\')">Accept Friend Request</button><button onclick="acceptFriendRequest(\'UUU\', \'false\')">Deny Friend Request</button>';
+            button = button.replace(/UUU/g, username);
+
+            var inner = '<h2 style="color: #000000;"><img style="float: left;" src="/SSS" alt="profilePic" width="93" height="93" /><hr> UUU</h2>BBB';
+            inner = inner.replace(/UUU/g, username);
+            inner = inner.replace(/SSS/g, profilePic);
+            inner = inner.replace(/BBB/g, button);
+
+            placeholder.innerHTML = inner;
+            placeholder.id = username;
+            content.push(placeholder);
+        }
+
+        function acceptFriendRequest(username, accepted) {
+            $.post(
+                "{% url 'home:acceptFriendRequest' %}",
+                {
+                    "accepted": accepted,
+                    "username": username
+                },
+                function(data, status) {
+                    if (status == "success") {
+                        var success = document.getElementById(username);
+                        success.innerHTML = '<p style="color: red;">'+data+'</p>';
+                        setTimeout(
+                            function() {
+                                success.innerText = "";
+                                console.log(true);
+                                content.forEach(element => {
+                                    if (element.id == username) {
+                                        element.remove();
+                                    }
+                                });
+                            },
+                            3000
+                        );
+                        console.log(true);
+                        
+                    }
+                }
+            );
+        }
+
+        $(
+            function() {
+                getFriendRequest();
+            }
+        )
+    </script>
+</head>
+<body>
+    <h1>Friend Requests</h1>
+    <div id="userList"></div>
+</body>
+</html>
